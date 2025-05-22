@@ -58,25 +58,44 @@ public class Tensor {
 
     public int   getDimension()   { return _dimension; }
     public int[] getSizes()       { return _sizes; }
+    public int   getSize()        { return _sizes[0]; }
     public int   getSize_k(int k) { assert (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied" ; return _sizes[k]; }
 
-    public int    getElement()      { assert _dimension == 0 : "non 0 dimension" ; return _element; }
-    public Tensor getElement(int k) {
+    public int getElement()      { assert _dimension == 0 : "non 0 dimension" ; return _element; }
+    public int getElement(int k) {
         assert _dimension == 0 || (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied";
 
-        return _dimension == 0 ? this : _elements[k];
+        return _elements[k].getElement();
     }
-    public Tensor getElement(int [] ks) {
-        assert ks.length < _dimension              : "0 <= ks.length < dimension not satisfied" ;
+    public int getElement(int [] ks) {
+        assert ks.length <= _dimension             : "0 <= ks.length < dimension not satisfied" ;
         assert (0 <= ks[0]) && (ks[0] < _sizes[0]) : "0 <= ks[0] < size not satisfied" ;
 
-        if (ks.length == 1)     return getElement(ks[0]);
+        if (ks.length == 1) return getElement(ks[0]);
 
 
         int[] tempSizes = new int[ks.length - 1];
-        System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
+        System.arraycopy(ks, 1, tempSizes, 0, ks.length - 1);
 
         return _elements[ks[0]].getElement(tempSizes);
+    }
+
+    public Tensor getSubTensor(int k) {
+        assert _dimension == 0 || (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied";
+
+        return _elements[k];
+    }
+    public Tensor getSubTensor(int [] ks) {
+        assert ks.length <= _dimension             : "0 <= ks.length < dimension not satisfied" ;
+        assert (0 <= ks[0]) && (ks[0] < _sizes[0]) : "0 <= ks[0] < size not satisfied" ;
+
+        if (ks.length == 1)     return getSubTensor(ks[0]);
+
+
+        int[] tempSizes = new int[ks.length - 1];
+        System.arraycopy(ks, 1, tempSizes, 0, ks.length - 1);
+
+        return _elements[ks[0]].getSubTensor(tempSizes);
     }
 
     // Setters
@@ -99,7 +118,7 @@ public class Tensor {
 
         if (ks.length != 1) {
             int[] tempSizes = new int[ks.length - 1];
-            System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
+            System.arraycopy(ks, 1, tempSizes, 0, ks.length - 1);
 
             _elements[ks[0]].setElement(new_element, tempSizes);
         } else {
@@ -113,7 +132,7 @@ public class Tensor {
 
         if (ks.length != 1) {
             int[] tempSizes = new int[ks.length - 1];
-            System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
+            System.arraycopy(ks, 1, tempSizes, 0, ks.length - 1);
 
             _elements[ks[0]].setElement(new_element, tempSizes);
         } else {
@@ -133,7 +152,7 @@ public class Tensor {
 
         if (_dimension != 0) {
             for (int i = 0; i < _dimension; i++) {
-                answer.setElement(_elements[i].add(other.getElement(i)), i);
+                answer.setElement(_elements[i].add(other.getSubTensor(i)), i);
             }
         } else {
             _element += other.getElement();
