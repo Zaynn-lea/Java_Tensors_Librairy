@@ -9,10 +9,6 @@
 package tensors;
 
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-
 public class Tensor {
 
     // Fields
@@ -24,9 +20,9 @@ public class Tensor {
 
 
     // Constructors and Destructors
+
     public Tensor() {}
-    @Contract(pure = true)
-    public Tensor(int dimension, int @NotNull [] sizes) {
+    public Tensor(int dimension, int[] sizes) {
         assert dimension >= 0            : "negative dimension";
         assert sizes.length == dimension : "dimension and number of sizes doesn't match";
 
@@ -39,7 +35,7 @@ public class Tensor {
 
         _CreateElements();
     }
-    private Tensor(int dimension, int @NotNull [] sizes, boolean initElt) {
+    private Tensor(int dimension, int[] sizes, boolean initElt) {
         assert dimension >= 0            : "negative dimension";
         assert sizes.length == dimension : "dimension and number of sizes doesn't match";
 
@@ -55,69 +51,88 @@ public class Tensor {
 
 
     // Getters
-    public int   get_dimension()   { return _dimension; }
-    public int[] get_sizes()       { return _sizes; }
-    public int   get_size_k(int k) { assert (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied" ; return _sizes[k]; }
 
-    public int    get_element()      { assert _dimension == 0 : "non 0 dimension" ; return _element; }
-    public Tensor get_element(int k) {
+    public int   getDimension()   { return _dimension; }
+    public int[] getSizes()       { return _sizes; }
+    public int   getSize_k(int k) { assert (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied" ; return _sizes[k]; }
+
+    public int    getElement()      { assert _dimension == 0 : "non 0 dimension" ; return _element; }
+    public Tensor getElement(int k) {
         assert _dimension == 0 || (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied";
 
         return _dimension == 0 ? this : _elements[k];
     }
-    public Tensor get_element(int @NotNull [] ks) {
+    public Tensor getElement(int [] ks) {
         assert ks.length < _dimension              : "0 <= ks.length < dimension not satisfied" ;
         assert (0 <= ks[0]) && (ks[0] < _sizes[0]) : "0 <= ks[0] < size not satisfied" ;
 
-        if (ks.length == 1)     return get_element(ks[0]);
+        if (ks.length == 1)     return getElement(ks[0]);
 
 
         int[] tempSizes = new int[ks.length - 1];
         System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
 
-        return _elements[ks[0]].get_element(tempSizes);
+        return _elements[ks[0]].getElement(tempSizes);
     }
 
     // Setters
 
-    public void set_element(int new_element) { assert _dimension == 0 : "non 0 dimension" ; _element = new_element; }
-    public void set_element(@NotNull Tensor new_element, int index) {
-        assert new_element.get_dimension() == _dimension - 1 : "dimensions of source and destination doesn't match";
+    public void setElement(int new_element) { assert _dimension == 0 : "non 0 dimension" ; _element = new_element; }
+    public void setElement(Tensor new_element, int index) {
+        assert new_element.getDimension() == _dimension - 1 : "dimensions of source and destination doesn't match";
         assert (0 <= index) && (index < _sizes[0])           : "0 <= index < size not satisfied";
 
         _elements[index] = new_element;
     }
-    public void set_element(@NotNull Tensor new_element, int @NotNull [] ks) {
-        assert ks.length < _dimension                                : "0 <= ks.length < dimension not satisfied";
-        assert new_element.get_dimension() == _dimension - ks.length : "dimensions of source and destination doesn't match";
+    public void setElement(int new_element, int index) {
+        assert (0 <= index) && (index < _sizes[0])           : "0 <= index < size not satisfied";
+
+        _element = new_element;
+    }
+    public void setElement(int new_element, int[] ks) {
+        assert ks.length == _dimension                               : "0 <= ks.length < dimension not satisfied";
         assert (0 <= ks[0]) && (ks[0] < _sizes[0])                   : "0 <= index < size not satisfied";
 
         if (ks.length != 1) {
             int[] tempSizes = new int[ks.length - 1];
             System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
 
-            _elements[ks[0]].set_element(new_element, tempSizes);
+            _elements[ks[0]].setElement(new_element, tempSizes);
         } else {
-            set_element(new_element, ks[0]);
+            setElement(new_element, ks[0]);
+        }
+    }
+    public void setElement(Tensor new_element, int[] ks) {
+        assert ks.length < _dimension                                : "0 <= ks.length < dimension not satisfied";
+        assert new_element.getDimension() == _dimension - ks.length : "dimensions of source and destination doesn't match";
+        assert (0 <= ks[0]) && (ks[0] < _sizes[0])                   : "0 <= index < size not satisfied";
+
+        if (ks.length != 1) {
+            int[] tempSizes = new int[ks.length - 1];
+            System.arraycopy(_sizes, 1, tempSizes, 0, ks.length - 1);
+
+            _elements[ks[0]].setElement(new_element, tempSizes);
+        } else {
+            setElement(new_element, ks[0]);
         }
     }
 
 
     // Operations
 
-    public Tensor add(@NotNull Tensor other) {
-        assert _dimension == other.get_dimension() : "both tensors must be of the same dimension";
-        assert _sizes == other.get_sizes()         : "both tensors must have the same sizes";
+    public Tensor add(Tensor other) {
+        assert _dimension == other.getDimension() : "both tensors must be of the same dimension";
+        assert _sizes == other.getSizes()         : "both tensors must have the same sizes";
 
         Tensor answer = new Tensor(_dimension, _sizes, false);
 
 
         if (_dimension != 0) {
             for (int i = 0; i < _dimension; i++) {
-                answer.set_element(_elements[i].add(other.get_element(i)), i);
+                answer.setElement(_elements[i].add(other.getElement(i)), i);
             }
         } else {
-            _element += other.get_element();
+            _element += other.getElement();
         }
 
 
@@ -132,7 +147,7 @@ public class Tensor {
 
             if (_dimension != 0) {
                 for (int i = 0; i < _dimension; i++) {
-                    answer.set_element(_elements[i].product(scalar), i);
+                    answer.setElement(_elements[i].product(scalar), i);
                 }
             } else {
                 _element *= scalar;
