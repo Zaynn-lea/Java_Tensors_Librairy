@@ -81,7 +81,7 @@ public class Tensor {
     }
 
     public Tensor getSubTensor(int k) {
-        assert _dimension == 0 || (0 <= k) && (k < _dimension) : "0 <= k < dimension not satisfied";
+        assert (_dimension == 0 || ((0 <= k) && (k < _sizes[0]))) : "0 <= k < dimension not satisfied";
 
         return _elements[k];
     }
