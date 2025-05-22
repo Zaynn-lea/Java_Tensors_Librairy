@@ -3,6 +3,10 @@
  Class defining a tensor of arbitrary dimension
 
  TODO : proper documentation
+
+ TODO : find and use a proper assertion librairy
+
+ TODO : test
 */
 
 

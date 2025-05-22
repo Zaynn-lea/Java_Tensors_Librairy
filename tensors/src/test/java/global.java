@@ -1,11 +1,14 @@
 
-import tensors.Tensor;
+import lib.tensor.tensors.tensors.Tensor;
+
 
 
 public class global {
     public static void main(String[] args) {
-        Tensor t = new Tensor(4, {5, 9, 7, 2});
+        int[] tempSizes = new int[] {5, 9, 7, 2};
+        Tensor t = new Tensor(4, tempSizes);
 
-        t.setElement(1, {1, 1, 6, 0});
+        tempSizes = new int[] {1, 1, 6, 0};
+        t.setElement(1, tempSizes);
     }
 }
