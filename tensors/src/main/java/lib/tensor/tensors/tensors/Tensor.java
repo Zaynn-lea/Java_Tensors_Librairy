@@ -110,7 +110,7 @@ public class Tensor {
     public void setElement(int new_element, int index) {
         assert (0 <= index) && (index < _sizes[0])           : "0 <= index < size not satisfied";
 
-        _element = new_element;
+        _elements[index].setElement(new_element);
     }
     public void setElement(int new_element, int[] ks) {
         assert ks.length == _dimension                               : "0 <= ks.length < dimension not satisfied";
