@@ -1,5 +1,9 @@
 
-import tensors.Tensor;
+package lib.tensor.tensors;
+
+
+import lib.tensor.tensors.tensors.Tensor;
+
 
 public class Main {
     public static void main(String[] args) {

@@ -6,7 +6,7 @@
 */
 
 
-package tensors;
+package lib.tensor.tensors.tensors;
 
 
 public class Tensor {

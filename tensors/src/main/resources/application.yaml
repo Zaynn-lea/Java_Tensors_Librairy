@@ -1,0 +1,7 @@
+application:
+  name: tensors
+  package: lib.tensor.tensors
+spring:
+  application:
+    name: ${application.name}
+
